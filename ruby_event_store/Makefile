@@ -13,7 +13,8 @@ IGNORE      = RubyEventStore::InMemoryRepository\#append_with_synchronize \
               RubyEventStore::SpecificationResult\#direction \
               RubyEventStore::SpecificationResult\#stream_name \
               RubyEventStore::SpecificationResult\#global_stream? \
-              RubyEventStore::Client::Within\#call
+              RubyEventStore::Client::Within\#call \
+              RubyEventStore::Mappers::EncryptedMapper\#prepare_cipher
 SUBJECT     ?= RubyEventStore*
 
 include ../lib/install.mk
