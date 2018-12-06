@@ -1,9 +1,9 @@
 module RailsEventStoreActiveRecord
   class IndexViolationDetector
 
-    MYSQL_PKEY_ERROR    = "for key 'PRIMARY'"
-    POSTGRES_PKEY_ERROR = "event_store_events_pkey"
-    SQLITE3_PKEY_ERROR  = "event_store_events.id"
+    MYSQL_PKEY_ERROR    = "for key 'index_event_store_events_on_event_id'"
+    POSTGRES_PKEY_ERROR = "Key (event_id)"
+    SQLITE3_PKEY_ERROR  = "event_store_events.event_id"
 
     MYSQL_INDEX_ERROR    = "for key 'index_event_store_events_in_streams_on_stream_and_event_id'"
     POSTGRES_INDEX_ERROR = "Key (stream, event_id)"

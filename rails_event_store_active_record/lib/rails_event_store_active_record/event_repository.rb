@@ -3,7 +3,6 @@ require 'activerecord-import'
 module RailsEventStoreActiveRecord
   class EventRepository
     POSITION_SHIFT = 1
-    SERIALIZED_GLOBAL_STREAM_NAME = "all".freeze
 
     def initialize
       verify_correct_schema_present
@@ -11,17 +10,17 @@ module RailsEventStoreActiveRecord
     end
 
     def append_to_stream(events, stream, expected_version)
-      add_to_stream(normalize_to_array(events), stream, expected_version, true) do |event|
+      add_to_stream(normalize_to_array(events), stream, expected_version) do |event|
         build_event_record(event).save!
         event.event_id
       end
     end
 
     def link_to_stream(event_ids, stream, expected_version)
-      (normalize_to_array(event_ids) - Event.where(id: event_ids).pluck(:id)).each do |id|
+      (normalize_to_array(event_ids) - Event.where(event_id: event_ids).pluck(:event_id)).each do |id|
         raise RubyEventStore::EventNotFound.new(id)
       end
-      add_to_stream(normalize_to_array(event_ids), stream, expected_version, nil) do |event_id|
+      add_to_stream(normalize_to_array(event_ids), stream, expected_version) do |event_id|
         event_id
       end
     end
@@ -48,47 +47,37 @@ module RailsEventStoreActiveRecord
 
     def update_messages(messages)
       hashes = messages.map(&:to_h)
-      hashes.each{|h| h[:id] = h.delete(:event_id) }
       for_update = messages.map(&:event_id)
       start_transaction do
-        existing = Event.where(id: for_update).pluck(:id)
-        (for_update - existing).each{|id| raise RubyEventStore::EventNotFound.new(id) }
+        existing = Event.where(event_id: for_update).pluck(:event_id, :id).to_h
+        (for_update - existing.keys).each{|id| raise RubyEventStore::EventNotFound.new(id) }
+        hashes.each{|h| h[:id] = existing[h.fetch(:event_id)] }
         Event.import(hashes, on_duplicate_key_update: [:data, :metadata, :event_type])
       end
     end
 
     def streams_of(event_id)
       EventInStream.where(event_id: event_id)
-        .where.not(stream: SERIALIZED_GLOBAL_STREAM_NAME)
         .pluck(:stream)
         .map{|name| RubyEventStore::Stream.new(name)}
     end
 
     private
 
-    def add_to_stream(collection, stream, expected_version, include_global, &to_event_id)
+    def add_to_stream(collection, stream, expected_version, &to_event_id)
       last_stream_version = ->(stream_) { EventInStream.where(stream: stream_.name).order("position DESC").first.try(:position) }
       resolved_version = expected_version.resolve_for(stream, last_stream_version)
 
       start_transaction do
-        in_stream = collection.flat_map.with_index do |element, index|
-          position = compute_position(resolved_version, index)
-          event_id = to_event_id.call(element)
-          collection = []
-          collection.unshift({
-            stream: SERIALIZED_GLOBAL_STREAM_NAME,
-            position: nil,
-            event_id: event_id,
-          }) if include_global
-          collection.unshift({
+        in_stream = collection.map.with_index do |element, index|
+          {
             stream:   stream.name,
-            position: position,
-            event_id: event_id
-          }) unless stream.global?
-          collection
+            position: compute_position(resolved_version, index),
+            event_id: to_event_id.call(element),
+          }
         end
         fill_ids(in_stream)
-        EventInStream.import(in_stream)
+        EventInStream.import(in_stream) unless stream.global?
       end
       self
     rescue ActiveRecord::RecordNotUnique => e
@@ -114,7 +103,7 @@ module RailsEventStoreActiveRecord
 
     def build_event_record(serialized_record)
       Event.new(
-        id:         serialized_record.event_id,
+        event_id:   serialized_record.event_id,
         data:       serialized_record.data,
         metadata:   serialized_record.metadata,
         event_type: serialized_record.event_type
