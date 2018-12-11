@@ -17,12 +17,12 @@ class CreateEventStoreEvents < ActiveRecord::Migration<%= migration_version %>
     add_index :event_store_events_in_streams, [:stream, :event_id], unique: true
 
     create_table(:event_store_events, force: false) do |t|
-      t.string      :event_type,  null: false
       if postgres
         t.references :event, null: false, type: :uuid
       else
         t.references :event, null: false, type: :string, limit: 36
       end
+      t.string      :event_type,  null: false
       t.binary      :metadata
       t.binary      :data,        null: false
       t.datetime    :created_at,  null: false
