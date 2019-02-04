@@ -12,6 +12,12 @@ rails_versions = {
   rails_5_0: '5.0.7',
   rails_4_2: '4.2.11',
 }
+database_urls = {
+  memory:   'sqlite3::memory:',
+  sqlite:   'sqlite3:db.sqlite3',
+  mysql:    'mysql2://root:secret@127.0.0.1/rails_event_store?pool=5',
+  postgres: 'postgres://postgres:secret@localhost/rails_event_store?pool=5',
+}
 GEMS = %w[
   aggregate_root
   bounded_context
@@ -80,17 +86,9 @@ def Job(name, docker, steps)
   { name => docker.merge("steps" => steps) }
 end
 
-database_url =
-  ->(gem_name) do
-    case gem_name
-    when /active_record/
-      "sqlite3:db.sqlite3"
-    when /rom/
-      "sqlite:db.sqlite3"
-    else
-      "sqlite3::memory:"
-    end
-  end
+normalize_url = ->(database_url, gem_name) do
+  gem_name == 'ruby_event_store-rom' ? database_url.gsub('sqlite3:', 'sqlite:') : database_url
+end
 
 merge = ->(array, transform = ->(item) { item }) do
   array.reduce({}) { |memo, item| memo.merge(transform.(item)) }
@@ -100,7 +98,7 @@ job = ->(task, env, name, gem_name) do
   env = {
     'RUBY_VERSION'  => ruby_versions[:ruby_2_6],
     'RAILS_VERSION' => rails_versions[:rails_5_2],
-    'DATABASE_URL'  => database_url[gem_name],
+    'DATABASE_URL'  => normalize_url[database_urls[:memory], gem_name],
     'DATA_TYPE'     => 'binary',
     'MUTANT_JOBS'   => 4
   }.merge(env)
@@ -131,7 +129,6 @@ rubies =
   merge[ruby_versions.to_a.product(GEMS).map { |(version_sym, version_number), gem_name|
     env = {
       "RUBY_VERSION" => version_number,
-      "DATABASE_URL" => database_url[gem_name]
     }
     job['test', env, job_name['test', gem_name, version_sym.to_s], gem_name]
   }]
@@ -140,8 +137,7 @@ rails =
     env = {
       "RAILS_VERSION" => version_number,
       "RUBY_VERSION"  => ruby_versions[:ruby_2_5],
-      "DATABASE_URL"  => database_url[gem_name]
-    }
+      }
     job['test', env, job_name['test', gem_name, version_sym.to_s], gem_name]
   }]
 mutations =
@@ -151,22 +147,29 @@ mutations =
 mysql_compat =
   merge[RDBMS_GEMS, ->(gem_name) {
     env = {
-      "DATABASE_URL" => "mysql2://root:secret@127.0.0.1/rails_event_store?pool=5"
+      "DATABASE_URL" => database_urls[:mysql]
     }
     job['test', env, job_name['test', gem_name, 'mysql'], gem_name]
   }]
 postgres_compat =
   merge[RDBMS_GEMS, ->(gem_name) {
     env = {
-      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+      "DATABASE_URL" => database_urls[:postgres]
     }
     job['test', env, job_name['test', gem_name, 'postgres'], gem_name]
+  }]
+sqlite_compat =
+  merge[RDBMS_GEMS, ->(gem_name) {
+    env = {
+      "DATABASE_URL" => database_urls[:sqlite]
+    }
+    job['test', env, job_name['test', gem_name, 'sqlite'], gem_name]
   }]
 json_compat =
   merge[DATATYPE_GEMS, ->(gem_name) {
     env = {
       "DATA_TYPE"    => "json",
-      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+      "DATABASE_URL" => database_urls[:postgres]
     }
     job['test', env, job_name['test', gem_name, 'data_type_json'], gem_name]
   }]
@@ -174,7 +177,7 @@ jsonb_compat =
   merge[DATATYPE_GEMS, ->(gem_name) {
     env = {
       "DATA_TYPE" => "jsonb",
-      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+      "DATABASE_URL" => database_urls[:postgres]
     }
     job['test', env, job_name['test', gem_name, 'data_type_jsonb'], gem_name]
   }]
@@ -186,6 +189,7 @@ jobs = [
   rails,
   mysql_compat,
   postgres_compat,
+  sqlite_compat,
   json_compat,
   jsonb_compat
 ]
@@ -197,7 +201,7 @@ workflows =
     }),
     Workflow("Ruby", rubies.keys.drop(GEMS.size)),
     Workflow("Rails", rails.keys),
-    Workflow("Database", [mysql_compat, postgres_compat, json_compat, jsonb_compat].flat_map(&:keys)),
+    Workflow("Database", [mysql_compat, postgres_compat, sqlite_compat, json_compat, jsonb_compat].flat_map(&:keys)),
   ]
 
 File.open(".circleci/config.yml", "w") do |f|
