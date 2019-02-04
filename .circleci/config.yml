@@ -864,12 +864,12 @@ jobs:
   test_bounded_context_rails_5_1:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -885,12 +885,12 @@ jobs:
   test_rails_event_store_rails_5_1:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -906,12 +906,12 @@ jobs:
   test_rails_event_store_active_record_rails_5_1:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -927,12 +927,12 @@ jobs:
   test_rails_event_store_rspec_rails_5_1:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -948,12 +948,12 @@ jobs:
   test_bounded_context_rails_5_0:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.0.7
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -969,12 +969,12 @@ jobs:
   test_rails_event_store_rails_5_0:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.0.7
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -990,12 +990,12 @@ jobs:
   test_rails_event_store_active_record_rails_5_0:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.0.7
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -1011,12 +1011,12 @@ jobs:
   test_rails_event_store_rspec_rails_5_0:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 5.0.7
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -1032,12 +1032,12 @@ jobs:
   test_bounded_context_rails_4_2:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -1053,12 +1053,12 @@ jobs:
   test_rails_event_store_rails_4_2:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -1074,12 +1074,12 @@ jobs:
   test_rails_event_store_active_record_rails_4_2:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -1095,12 +1095,12 @@ jobs:
   test_rails_event_store_rspec_rails_4_2:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.6.0
         RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.6.0
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store

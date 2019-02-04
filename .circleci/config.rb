@@ -136,8 +136,7 @@ rails =
   merge[rails_versions.drop(1).to_a.product(RAILS_GEMS).map { |(version_sym, version_number), gem_name|
     env = {
       "RAILS_VERSION" => version_number,
-      "RUBY_VERSION"  => ruby_versions[:ruby_2_5],
-      }
+    }
     job['test', env, job_name['test', gem_name, version_sym.to_s], gem_name]
   }]
 mutations =
