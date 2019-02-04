@@ -204,8 +204,8 @@ workflows =
     Workflow("Rails 5.1", rails.keys.drop(RAILS_GEMS.size * 2).take(RAILS_GEMS.size)),
     Workflow("MySQL", mysql_compat.keys),
     Workflow("PostgreSQL", postgres_compat.keys),
-    Workflow("JSONB data type", json_compat.keys),
-    Workflow("JSON data type", jsonb_compat.keys)
+    Workflow("JSON data type", json_compat.keys),
+    Workflow("JSONB data type", jsonb_compat.keys),
   ]
 
 File.open(".circleci/config.yml", "w") do |f|

@@ -1334,9 +1334,9 @@ workflows:
     jobs:
     - test_rails_event_store_active_record_postgres
     - test_ruby_event_store_rom_postgres
-  JSONB data type:
+  JSON data type:
     jobs:
     - test_ruby_event_store_rom_data_type_json
-  JSON data type:
+  JSONB data type:
     jobs:
     - test_ruby_event_store_rom_data_type_jsonb
