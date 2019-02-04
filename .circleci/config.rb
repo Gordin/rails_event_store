@@ -1,5 +1,18 @@
 require "yaml"
 
+ruby_versions = {
+  ruby_2_6: '2.6.0',
+  ruby_2_3: '2.3.8',
+  ruby_2_4: '2.4.5',
+  ruby_2_5: '2.5.3',
+}
+rails_versions = {
+  rails_5_2: '5.2.2',
+  rails_4_2: '4.2.11',
+  rails_5_0: '5.0.7',
+  rails_5_1: '5.1.6.1',
+}
+
 GEMS = %w[
   aggregate_root
   bounded_context
@@ -10,19 +23,16 @@ GEMS = %w[
   rails_event_store_active_record
   rails_event_store-rspec
 ]
-
 RAILS_GEMS = %w[
   bounded_context
   rails_event_store
   rails_event_store_active_record
   rails_event_store-rspec
 ]
-
 RDBMS_GEMS = %w[
   rails_event_store_active_record
   ruby_event_store-rom
 ]
-
 DATATYPE_GEMS = %w[
   ruby_event_store-rom
 ]
@@ -71,10 +81,6 @@ def Job(name, docker, steps)
   { name => docker.merge("steps" => steps) }
 end
 
-def GemJob(task, docker, gem_name, name)
-  Job(name, docker, ["checkout", Run("make -C #{gem_name} install #{task}")])
-end
-
 database_url =
   ->(gem_name) do
     case gem_name
@@ -86,12 +92,28 @@ database_url =
       "sqlite3::memory:"
     end
   end
-identity = ->(item) { item }
-normalize = ->(name) { name.gsub("-", "_").gsub(".", "_") }
-merge = ->(array, transform = identity) { array.reduce({}) { |memo, item| memo.merge(transform.(item)) } }
-mutate = ->(name, gem_name) { GemJob('mutate', Docker('pawelpacana/res:2.6.0', { 'MUTANT_JOBS' => 4 }), gem_name, name) }
-test = ->(docker, name, gem_name) { GemJob('test', docker, gem_name, name) }
-job_name = ->(task, ruby_version, gem_name) { [task, gem_name, ruby_version].map(&normalize).join('_') }
+
+merge = ->(array, transform = ->(item) { item }) do
+  array.reduce({}) { |memo, item| memo.merge(transform.(item)) }
+end
+
+job = ->(task, env, name, gem_name) do
+  env = {
+    'RUBY_VERSION'  => ruby_versions[:ruby_2_6],
+    'RAILS_VERSION' => rails_versions[:rails_5_2],
+    'DATABASE_URL'  => database_url[gem_name],
+    'DATA_TYPE'     => 'binary',
+    'MUTANT_JOBS'   => 4
+  }.merge(env)
+  docker = Docker("pawelpacana/res:#{env['RUBY_VERSION']}", env)
+  Job(name, docker, ["checkout", Run("make -C #{gem_name} install #{task}")])
+end
+
+job_name = ->(task, gem_name, version_name) do
+  [task, gem_name, version_name]
+    .map { |name| name.gsub("-", "_").gsub(".", "_") }
+    .join('_')
+end
 
 check_config =
   Job(
@@ -106,29 +128,63 @@ check_config =
     ]
   )
 
-ruby_2_3_compat = merge.(GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.3.8", { "DATABASE_URL" => database_url[gem_name] }), job_name.curry['test', 'ruby_2_3'][gem_name], gem_name) })
-ruby_2_4_compat = merge.(GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.4.5", { "DATABASE_URL" => database_url[gem_name] }), job_name.curry['test', 'ruby_2_4'][gem_name], gem_name) })
-ruby_2_5_compat = merge.(GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.5.3", { "DATABASE_URL" => database_url[gem_name] }), job_name.curry['test', 'ruby_2_5'][gem_name], gem_name) })
-current_ruby = merge.(GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.6.0", { "DATABASE_URL" => database_url[gem_name] }), job_name.curry['test', 'ruby_2_6'][gem_name], gem_name) })
-mutations = merge.(GEMS, ->(gem_name) { mutate.(job_name.curry['mutate', 'ruby_2_6'][gem_name], gem_name) })
-rails_4_2_compat = merge.(RAILS_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.5.3", { "RAILS_VERSION" => "4.2.11" }), job_name.curry['test', 'rails_4_2'][gem_name], gem_name) })
-rails_5_0_compat = merge.(RAILS_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.5.3", { "RAILS_VERSION" => "5.0.7" }), job_name.curry['test', 'rails_5_0'][gem_name], gem_name) })
-rails_5_1_compat = merge.(RAILS_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.5.3", { "RAILS_VERSION" => "5.1.6.1" }), job_name.curry['test', 'rails_5_1'][gem_name], gem_name) })
-mysql_compat = merge.(RDBMS_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.6.0", { "DATABASE_URL" => "mysql2://root:secret@127.0.0.1/rails_event_store?pool=5" }), job_name.curry['test', 'mysql'][gem_name], gem_name) })
-postgres_compat = merge.(RDBMS_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.6.0", { "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5" }), job_name.curry['test', 'postgres'][gem_name], gem_name) })
-json_compat = merge.(DATATYPE_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.6.0", { "DATA_TYPE" => "json", "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5" }), job_name.curry['test', 'data_type_json'][gem_name], gem_name) })
-jsonb_compat = merge.(DATATYPE_GEMS, ->(gem_name) { test.(Docker("pawelpacana/res:2.6.0", { "DATA_TYPE" => "jsonb", "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5" }), job_name.curry['test', 'data_type_jsonb'][gem_name], gem_name) })
+rubies =
+  merge[ruby_versions.to_a.product(GEMS).map { |(version_sym, version_number), gem_name|
+    env = {
+      "RUBY_VERSION" => version_number,
+      "DATABASE_URL" => database_url[gem_name]
+    }
+    job['test', env, job_name['test', gem_name, version_sym.to_s], gem_name]
+  }]
+rails =
+  merge[rails_versions.drop(1).to_a.product(RAILS_GEMS).map { |(version_sym, version_number), gem_name|
+    env = {
+      "RAILS_VERSION" => version_number,
+      "RUBY_VERSION"  => ruby_versions[:ruby_2_5],
+      "DATABASE_URL"  => database_url[gem_name]
+    }
+    job['test', env, job_name['test', gem_name, version_sym.to_s], gem_name]
+  }]
+mutations =
+  merge[GEMS, ->(gem_name) {
+    job['mutate', {}, job_name['mutate', gem_name, 'ruby_2_6'], gem_name]
+  }]
+mysql_compat =
+  merge[RDBMS_GEMS, ->(gem_name) {
+    env = {
+      "DATABASE_URL" => "mysql2://root:secret@127.0.0.1/rails_event_store?pool=5"
+    }
+    job['test', env, job_name['test', gem_name, 'mysql'], gem_name]
+  }]
+postgres_compat =
+  merge[RDBMS_GEMS, ->(gem_name) {
+    env = {
+      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+    }
+    job['test', env, job_name['test', gem_name, 'postgres'], gem_name]
+  }]
+json_compat =
+  merge[DATATYPE_GEMS, ->(gem_name) {
+    env = {
+      "DATA_TYPE"    => "json",
+      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+    }
+    job['test', env, job_name['test', gem_name, 'data_type_json'], gem_name]
+  }]
+jsonb_compat =
+  merge[DATATYPE_GEMS, ->(gem_name) {
+    env = {
+      "DATA_TYPE" => "jsonb",
+      "DATABASE_URL" => "postgres://postgres:secret@localhost/rails_event_store?pool=5"
+    }
+    job['test', env, job_name['test', gem_name, 'data_type_jsonb'], gem_name]
+  }]
 
 jobs = [
   check_config,
   mutations,
-  current_ruby,
-  ruby_2_3_compat,
-  ruby_2_4_compat,
-  ruby_2_5_compat,
-  rails_4_2_compat,
-  rails_5_0_compat,
-  rails_5_1_compat,
+  rubies,
+  rails,
   mysql_compat,
   postgres_compat,
   json_compat,
@@ -137,19 +193,19 @@ jobs = [
 workflows =
   [
     Workflow("Check configuration", %w[check_config]),
-    Workflow("Current Ruby", GEMS.flat_map { |gem_name|
-      Requires(job_name.curry['mutate', 'ruby_2_6'][gem_name] => job_name.curry['test', 'ruby_2_6'][gem_name])
+    Workflow("Current Ruby", mutations.keys.zip(rubies.keys.take(GEMS.size)).flat_map { |mutate_name, test_name|
+      Requires(mutate_name => test_name)
     }),
-    Workflow("Ruby 2.5", GEMS.map(&job_name.curry['test', 'ruby_2_5'])),
-    Workflow("Ruby 2.4", GEMS.map(&job_name.curry['test', 'ruby_2_4'])),
-    Workflow("Ruby 2.3", GEMS.map(&job_name.curry['test', 'ruby_2_3'])),
-    Workflow("Rails 4.2", RAILS_GEMS.map(&job_name.curry['test', 'rails_4_2'])),
-    Workflow("Rails 5.0", RAILS_GEMS.map(&job_name.curry['test', 'rails_5_0'])),
-    Workflow("Rails 5.1", RAILS_GEMS.map(&job_name.curry['test', 'rails_5_1'])),
-    Workflow("MySQL", RDBMS_GEMS.map(&job_name.curry['test', 'mysql'])),
-    Workflow("PostgreSQL", RDBMS_GEMS.map(&job_name.curry['test', 'postgres'])),
-    Workflow("JSONB data type", DATATYPE_GEMS.map(&job_name.curry['test', 'data_type_json'])),
-    Workflow("JSON data type", DATATYPE_GEMS.map(&job_name.curry['test', 'data_type_jsonb']))
+    Workflow("Ruby 2.5", rubies.keys.drop(GEMS.size * 3).take(GEMS.size)),
+    Workflow("Ruby 2.4", rubies.keys.drop(GEMS.size * 2).take(GEMS.size)),
+    Workflow("Ruby 2.3", rubies.keys.drop(GEMS.size).take(GEMS.size)),
+    Workflow("Rails 4.2", rails.keys.take(RAILS_GEMS.size)),
+    Workflow("Rails 5.0", rails.keys.drop(RAILS_GEMS.size).take(RAILS_GEMS.size)),
+    Workflow("Rails 5.1", rails.keys.drop(RAILS_GEMS.size * 2).take(RAILS_GEMS.size)),
+    Workflow("MySQL", mysql_compat.keys),
+    Workflow("PostgreSQL", postgres_compat.keys),
+    Workflow("JSONB data type", json_compat.keys),
+    Workflow("JSON data type", jsonb_compat.keys)
   ]
 
 File.open(".circleci/config.yml", "w") do |f|
