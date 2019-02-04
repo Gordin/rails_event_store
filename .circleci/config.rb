@@ -2,17 +2,16 @@ require "yaml"
 
 ruby_versions = {
   ruby_2_6: '2.6.0',
-  ruby_2_3: '2.3.8',
-  ruby_2_4: '2.4.5',
   ruby_2_5: '2.5.3',
+  ruby_2_4: '2.4.5',
+  ruby_2_3: '2.3.8',
 }
 rails_versions = {
   rails_5_2: '5.2.2',
-  rails_4_2: '4.2.11',
-  rails_5_0: '5.0.7',
   rails_5_1: '5.1.6.1',
+  rails_5_0: '5.0.7',
+  rails_4_2: '4.2.11',
 }
-
 GEMS = %w[
   aggregate_root
   bounded_context
@@ -193,19 +192,12 @@ jobs = [
 workflows =
   [
     Workflow("Check configuration", %w[check_config]),
-    Workflow("Current Ruby", mutations.keys.zip(rubies.keys.take(GEMS.size)).flat_map { |mutate_name, test_name|
+    Workflow("Current", mutations.keys.zip(rubies.keys.take(GEMS.size)).flat_map { |mutate_name, test_name|
       Requires(mutate_name => test_name)
     }),
-    Workflow("Ruby 2.5", rubies.keys.drop(GEMS.size * 3).take(GEMS.size)),
-    Workflow("Ruby 2.4", rubies.keys.drop(GEMS.size * 2).take(GEMS.size)),
-    Workflow("Ruby 2.3", rubies.keys.drop(GEMS.size).take(GEMS.size)),
-    Workflow("Rails 4.2", rails.keys.take(RAILS_GEMS.size)),
-    Workflow("Rails 5.0", rails.keys.drop(RAILS_GEMS.size).take(RAILS_GEMS.size)),
-    Workflow("Rails 5.1", rails.keys.drop(RAILS_GEMS.size * 2).take(RAILS_GEMS.size)),
-    Workflow("MySQL", mysql_compat.keys),
-    Workflow("PostgreSQL", postgres_compat.keys),
-    Workflow("JSON data type", json_compat.keys),
-    Workflow("JSONB data type", jsonb_compat.keys),
+    Workflow("Ruby", rubies.keys.drop(GEMS.size)),
+    Workflow("Rails", rails.keys),
+    Workflow("Database", [mysql_compat, postgres_compat, json_compat, jsonb_compat].flat_map(&:keys)),
   ]
 
 File.open(".circleci/config.yml", "w") do |f|

@@ -357,15 +357,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store-rspec install test
-  test_aggregate_root_ruby_2_3:
+  test_aggregate_root_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -378,15 +378,15 @@ jobs:
     steps:
     - checkout
     - run: make -C aggregate_root install test
-  test_bounded_context_ruby_2_3:
+  test_bounded_context_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -399,15 +399,15 @@ jobs:
     steps:
     - checkout
     - run: make -C bounded_context install test
-  test_ruby_event_store_ruby_2_3:
+  test_ruby_event_store_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -420,15 +420,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store install test
-  test_ruby_event_store_browser_ruby_2_3:
+  test_ruby_event_store_browser_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -441,15 +441,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store-browser install test
-  test_ruby_event_store_rom_ruby_2_3:
+  test_ruby_event_store_rom_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: sqlite:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -462,15 +462,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store-rom install test
-  test_rails_event_store_ruby_2_3:
+  test_rails_event_store_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -483,15 +483,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store install test
-  test_rails_event_store_active_record_ruby_2_3:
+  test_rails_event_store_active_record_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: sqlite3:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -504,15 +504,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store_active_record install test
-  test_rails_event_store_rspec_ruby_2_3:
+  test_rails_event_store_rspec_ruby_2_5:
     docker:
     - environment:
-        RUBY_VERSION: 2.3.8
+        RUBY_VERSION: 2.5.3
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.3.8
+      image: pawelpacana/res:2.5.3
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -693,15 +693,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store-rspec install test
-  test_aggregate_root_ruby_2_5:
+  test_aggregate_root_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -714,15 +714,15 @@ jobs:
     steps:
     - checkout
     - run: make -C aggregate_root install test
-  test_bounded_context_ruby_2_5:
+  test_bounded_context_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -735,15 +735,15 @@ jobs:
     steps:
     - checkout
     - run: make -C bounded_context install test
-  test_ruby_event_store_ruby_2_5:
+  test_ruby_event_store_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -756,15 +756,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store install test
-  test_ruby_event_store_browser_ruby_2_5:
+  test_ruby_event_store_browser_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -777,15 +777,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store-browser install test
-  test_ruby_event_store_rom_ruby_2_5:
+  test_ruby_event_store_rom_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: sqlite:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -798,15 +798,15 @@ jobs:
     steps:
     - checkout
     - run: make -C ruby_event_store-rom install test
-  test_rails_event_store_ruby_2_5:
+  test_rails_event_store_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -819,15 +819,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store install test
-  test_rails_event_store_active_record_ruby_2_5:
+  test_rails_event_store_active_record_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: sqlite3:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -840,15 +840,15 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store_active_record install test
-  test_rails_event_store_rspec_ruby_2_5:
+  test_rails_event_store_rspec_ruby_2_3:
     docker:
     - environment:
-        RUBY_VERSION: 2.5.3
+        RUBY_VERSION: 2.3.8
         RAILS_VERSION: 5.2.2
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
-      image: pawelpacana/res:2.5.3
+      image: pawelpacana/res:2.3.8
     - image: postgres:11
       environment:
       - POSTGRES_DB=rails_event_store
@@ -861,11 +861,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store-rspec install test
-  test_bounded_context_rails_4_2:
+  test_bounded_context_rails_5_1:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 4.2.11
+        RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -882,11 +882,11 @@ jobs:
     steps:
     - checkout
     - run: make -C bounded_context install test
-  test_rails_event_store_rails_4_2:
+  test_rails_event_store_rails_5_1:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 4.2.11
+        RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -903,11 +903,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store install test
-  test_rails_event_store_active_record_rails_4_2:
+  test_rails_event_store_active_record_rails_5_1:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 4.2.11
+        RAILS_VERSION: 5.1.6.1
         DATABASE_URL: sqlite3:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -924,11 +924,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store_active_record install test
-  test_rails_event_store_rspec_rails_4_2:
+  test_rails_event_store_rspec_rails_5_1:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 4.2.11
+        RAILS_VERSION: 5.1.6.1
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -1029,11 +1029,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store-rspec install test
-  test_bounded_context_rails_5_1:
+  test_bounded_context_rails_4_2:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 5.1.6.1
+        RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -1050,11 +1050,11 @@ jobs:
     steps:
     - checkout
     - run: make -C bounded_context install test
-  test_rails_event_store_rails_5_1:
+  test_rails_event_store_rails_4_2:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 5.1.6.1
+        RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -1071,11 +1071,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store install test
-  test_rails_event_store_active_record_rails_5_1:
+  test_rails_event_store_active_record_rails_4_2:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 5.1.6.1
+        RAILS_VERSION: 4.2.11
         DATABASE_URL: sqlite3:db.sqlite3
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -1092,11 +1092,11 @@ jobs:
     steps:
     - checkout
     - run: make -C rails_event_store_active_record install test
-  test_rails_event_store_rspec_rails_5_1:
+  test_rails_event_store_rspec_rails_4_2:
     docker:
     - environment:
         RUBY_VERSION: 2.5.3
-        RAILS_VERSION: 5.1.6.1
+        RAILS_VERSION: 4.2.11
         DATABASE_URL: 'sqlite3::memory:'
         DATA_TYPE: binary
         MUTANT_JOBS: 4
@@ -1244,7 +1244,7 @@ workflows:
   Check configuration:
     jobs:
     - check_config
-  Current Ruby:
+  Current:
     jobs:
     - test_aggregate_root_ruby_2_6
     - mutate_aggregate_root_ruby_2_6:
@@ -1278,7 +1278,7 @@ workflows:
     - mutate_rails_event_store_rspec_ruby_2_6:
         requires:
         - test_rails_event_store_rspec_ruby_2_6
-  Ruby 2.5:
+  Ruby:
     jobs:
     - test_aggregate_root_ruby_2_5
     - test_bounded_context_ruby_2_5
@@ -1288,8 +1288,6 @@ workflows:
     - test_rails_event_store_ruby_2_5
     - test_rails_event_store_active_record_ruby_2_5
     - test_rails_event_store_rspec_ruby_2_5
-  Ruby 2.4:
-    jobs:
     - test_aggregate_root_ruby_2_4
     - test_bounded_context_ruby_2_4
     - test_ruby_event_store_ruby_2_4
@@ -1298,8 +1296,6 @@ workflows:
     - test_rails_event_store_ruby_2_4
     - test_rails_event_store_active_record_ruby_2_4
     - test_rails_event_store_rspec_ruby_2_4
-  Ruby 2.3:
-    jobs:
     - test_aggregate_root_ruby_2_3
     - test_bounded_context_ruby_2_3
     - test_ruby_event_store_ruby_2_3
@@ -1308,35 +1304,25 @@ workflows:
     - test_rails_event_store_ruby_2_3
     - test_rails_event_store_active_record_ruby_2_3
     - test_rails_event_store_rspec_ruby_2_3
-  Rails 4.2:
-    jobs:
-    - test_bounded_context_rails_4_2
-    - test_rails_event_store_rails_4_2
-    - test_rails_event_store_active_record_rails_4_2
-    - test_rails_event_store_rspec_rails_4_2
-  Rails 5.0:
-    jobs:
-    - test_bounded_context_rails_5_0
-    - test_rails_event_store_rails_5_0
-    - test_rails_event_store_active_record_rails_5_0
-    - test_rails_event_store_rspec_rails_5_0
-  Rails 5.1:
+  Rails:
     jobs:
     - test_bounded_context_rails_5_1
     - test_rails_event_store_rails_5_1
     - test_rails_event_store_active_record_rails_5_1
     - test_rails_event_store_rspec_rails_5_1
-  MySQL:
+    - test_bounded_context_rails_5_0
+    - test_rails_event_store_rails_5_0
+    - test_rails_event_store_active_record_rails_5_0
+    - test_rails_event_store_rspec_rails_5_0
+    - test_bounded_context_rails_4_2
+    - test_rails_event_store_rails_4_2
+    - test_rails_event_store_active_record_rails_4_2
+    - test_rails_event_store_rspec_rails_4_2
+  Database:
     jobs:
     - test_rails_event_store_active_record_mysql
     - test_ruby_event_store_rom_mysql
-  PostgreSQL:
-    jobs:
     - test_rails_event_store_active_record_postgres
     - test_ruby_event_store_rom_postgres
-  JSON data type:
-    jobs:
     - test_ruby_event_store_rom_data_type_json
-  JSONB data type:
-    jobs:
     - test_ruby_event_store_rom_data_type_jsonb
